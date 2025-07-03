@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome - SubtitleGen</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1d2b3a;
+      color: #fff;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: #1d2b3a;
+    }
+
+    .navbar h1 {
+      color: #fcd34d;
+      margin: 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 30px;
+      font-weight: 500;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+      min-height: 90vh;
+    }
+
+    .hero-text h2 {
+      font-size: 2.5rem;
+      color: #fcd34d;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+    }
+
+    .options {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 30px 40px;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.2rem;
+      transition: transform 0.3s, background 0.3s;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    .card:hover {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h1>SubtitleGen</h1>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Services</a>
+      <a href="#">Blog</a>
+      <a href="#">About</a>
+      <a href="#">FAQ</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h2>Welcome, {{ username }} 👋</h2>
+      <p>Choose what you'd like to do today:</p>
+    </div>
+
+    <div class="options">
+      <a class="card" href="/subtitle-generator">🎬 Subtitle Generator</a>
+      <a class="card" href="/audio-transcription">🎧 Audio Transcription</a>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Subtitle Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    label, select, input {
+      display: block;
+      margin-top: 10px;
+    }
+    #downloadLink {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Upload Video/Audio to Generate Subtitles</h2>
+
+  <form id="uploadForm">
+    <label for="file">Choose File:</label>
+    <input type="file" id="file" name="file" required>
+
+    <label for="model">Model Size:</label>
+    <select id="model" name="model_size">
+      <option value="tiny">Tiny</option>
+      <option value="base">Base</option>
+      <option value="small">Small</option>
+      <option value="medium" selected>Medium</option>
+      <option value="large">Large</option>
+    </select>
+
+    <label for="language">Language:</label>
+    <select id="language" name="lang">
+      <option value="english" selected>English</option>
+      <option value="french">French</option>
+      <option value="german">German</option>
+    </select>
+
+    <button type="submit">Generate Subtitles</button>
+  </form>
+
+  <div id="downloadLink">
+    <p>Subtitles generated! <a id="srtLink" href="#" download>Download .srt file</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const downloadDiv = document.getElementById('downloadLink');
+    const srtLink = document.getElementById('srtLink');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('file');
+      const model = document.getElementById('model').value;
+      const lang = document.getElementById('language').value;
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('model_size', model);
+      formData.append('lang', lang);
+
+      console.log("File:", fileInput.files[0]);
+      console.log("Model Size:", model);
+      console.log("Language:", lang);
+
+      try {
+        const response = await fetch('http://127.0.0.1:5000/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          console.log("Upload failed with status:", response.status);
+          throw new Error('Upload failed');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        srtLink.href = url;
+        srtLink.download = "subtitles.srt";
+        downloadDiv.style.display = 'block';
+
+        console.log("Subtitle file ready for download.");
+      } catch (err) {
+        console.log("Error during upload:", err.message);
+        alert("Error: " + err.message);
+      }
+    });
+  </script>
+
+</body>
+</html>

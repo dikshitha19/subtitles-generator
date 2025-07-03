@@ -1,0 +1,128 @@
+body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1d2b3a;
+      color: #fff;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: #1d2b3a;
+    }
+
+    .navbar h1 {
+      color: #fcd34d;
+      margin: 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 30px;
+      font-weight: 500;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .hero-text {
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+
+    .hero-text h2 {
+      font-size: 2.5rem;
+      color: #fcd34d;
+    }
+
+    .hero-text h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .hero-text p {
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background-color: #fff;
+      color: #000;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      color: #fff;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #progress, #downloadLink {
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+    }
+
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #764ba2;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a#srtLink {
+      color: #fcd34d;
+      font-weight: bold;
+      text-decoration: none;
+    }

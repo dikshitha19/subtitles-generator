@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtitle Generator</title>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #progress {
+            margin-top: 20px;
+            display: none;
+        }
+        progress {
+            width: 100%;
+            height: 20px;
+        }
+        #downloadLink {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        #downloadLink a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        #downloadLink a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Your existing HTML structure -->
+        <h1>Video/Audio to Subtitle Converter</h1>
+        
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="file">Select Video/Audio File:</label>
+                <input type="file" id="file" name="file" accept=".mp4,.avi,.mov,.mp3,.wav,.mkv" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="model">Model Size:</label>
+                <select id="model" name="model_size">
+                    <option value="tiny">Tiny (Fastest, least accurate)</option>
+                    <option value="base">Base</option>
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium (Recommended)</option>
+                    <option value="large">Large (Slowest, most accurate)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="language">Language:</label>
+                <select id="language" name="lang">
+                    <option value="english" selected>English</option>
+                    <option value="french">French</option>
+                    <option value="german">German</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="italian">Italian</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Generate Subtitles</button>
+        </form>
+        
+        <div id="progress" style="display: none;">
+            <p id="progressMessage">Starting...</p>
+            <progress id="progressBar" value="0" max="100"></progress>
+            <p id="progressPercent">0%</p>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="downloadLink">
+            <p>Subtitles generated successfully!</p>
+            <p><a id="srtLink" href="#" download>Download SRT File</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('file');
+            const submitBtn = document.getElementById('submitBtn');
+            const progressDiv = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressMessage = document.getElementById('progressMessage');
+            const statusDiv = document.getElementById('status');
+            const downloadDiv = document.getElementById('downloadLink');
+            const srtLink = document.getElementById('srtLink');
+            
+            // Reset UI
+            statusDiv.style.display = 'none';
+            downloadDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            progressDiv.style.display = 'block';
+            progressBar.value = 0;
+            progressPercent.textContent = '0%';
+            progressMessage.textContent = 'Starting...';
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('model_size', document.getElementById('model').value);
+            formData.append('lang', document.getElementById('language').value);
+            
+            // Create a new EventSource connection
+            const eventSource = new EventSource(`/stream_progress?filename=${encodeURIComponent(fileInput.files[0].name)}`);
+            
+            eventSource.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                
+                if (data.error) {
+                    statusDiv.textContent = 'Error: ' + data.error;
+                    statusDiv.className = 'error';
+                    statusDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    eventSource.close();
+                    return;
+                }
+                
+                // Update progress
+                progressBar.value = data.progress;
+                progressPercent.textContent = data.progress + '%';
+                progressMessage.textContent = data.message;
+                
+                if (data.progress === 100) {
+                    statusDiv.textContent = 'Subtitles generated successfully!';
+                    statusDiv.className = 'success';
+                    statusDiv.style.display = 'block';
+                    downloadDiv.style.display = 'block';
+                    srtLink.href = `/download/${data.filename}`;
+                    srtLink.download = data.filename;
+                    submitBtn.disabled = false;
+                    eventSource.close();
+                }
+            };
+            
+            eventSource.onerror = function() {
+                statusDiv.textContent = 'Connection error occurred';
+                statusDiv.className = 'error';
+                statusDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                eventSource.close();
+            };
+            
+            // Start the actual file processing
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).catch(error => {
+                statusDiv.textContent = 'Upload failed: ' + error.message;
+                statusDiv.className = 'error';
+                statusDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                eventSource.close();
+            });
+        });
+    </script>
+</body>
+</html>
